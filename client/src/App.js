@@ -1,16 +1,15 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Incognito</title>
-    <link rel="stylesheet" type="text/css" href="/styles.css" />
-  </head>
-  <body>
-    <ul id="messages"></ul>
-    <form id="form" action="">
-      <input id="input" autocomplete="off" /><button>Send</button>
-    </form>
+import "./App.css";
 
-    <script src="/socket.io/socket.io.js"></script>
+function App() {
+  return (
+    <div className="App">
+      <ul id="messages"></ul>
+      <form id="form" action="">
+        <input id="input" autocomplete="off" />
+        <button>Send</button>
+      </form>
+
+      {/* <script src="/socket.io/socket.io.js"></script>
     <script>
       var socket = io();
 
@@ -32,6 +31,9 @@
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       });
-    </script>
-  </body>
-</html>
+    </script> */}
+    </div>
+  );
+}
+
+export default App;
