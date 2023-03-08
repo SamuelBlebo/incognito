@@ -1,23 +1,27 @@
-const app = require("express")();
-const http = require("http").createServer(app);
-const io = require("socket.io")(http);
+const express = require("express");
+const app = express();
+const http = require("http");
+const { Server } = require("socket.io");
+const cors = require("cors");
 
-io.on("connection", (socket) => {
-  console.log("a user connected");
+app.use(cors());
 
-  // Handle incoming chat messages
-  socket.on("chat message", (msg) => {
-    console.log("message: " + msg);
+const server = http.createServer(app);
 
-    // Emit the chat message to all connected clients except the sender
-    socket.broadcast.emit("chat message", msg);
-  });
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    method: ["GET", "POST"],
+  },
+});
 
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
+io.on("connection", () => {
+  console.log(`user connected: ${socket.id}`);
+  socket.on("send_message", (data) => {
+    socket.emit("received_message", data);
   });
 });
 
-http.listen(4000, () => {
-  console.log("listening on *:4000");
+server.listen(3001, () => {
+  console.log("Server running on port : 3001");
 });
