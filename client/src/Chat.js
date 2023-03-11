@@ -4,10 +4,12 @@ import io from "socket.io-client";
 const socket = io.connect("http://localhost:3001");
 
 const Chat = () => {
-  const { message, setMessage } = useState("");
-  const { messageReceived, setMessageReceived } = useState("");
+  // Messages States
+  const [message, setMessage] = useState("");
+  const [messageReceived, setMessageReceived] = useState("");
+
   const sendMessage = () => {
-    socket.emit("send_message", { message: "Hello" });
+    socket.emit("send_message", { message });
   };
 
   useEffect(() => {
@@ -17,14 +19,15 @@ const Chat = () => {
   });
 
   return (
-    <div>
+    <div className="App">
       <ul id="messages">
-        {message.map((msg, index) => (
-          <li key={index}>{msg}</li>
+        {message.map((messageReceived, index) => (
+          <li key={index}>{messageReceived}</li>
         ))}
       </ul>
       <form id="form" onSubmit={messageReceived}>
         <input
+          placeholder="message ....."
           id="input"
           type="text"
           autoComplete="off"
