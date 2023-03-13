@@ -1,14 +1,13 @@
 const express = require("express");
-const app = express();
 const http = require("http");
-const { Server } = require("socket.io");
+const Server = require("socket.io");
 const cors = require("cors");
 
+const app = express();
 app.use(cors());
 
 const server = http.createServer(app);
-
-const io = new Server(server, {
+const io = Server(server, {
   cors: {
     origin: "http://localhost:3000",
     methods: ["GET", "POST"],
@@ -16,17 +15,20 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log(`User Connected: ${socket.id}`);
+  console.log("User connected");
 
-  socket.on("join_room", (data) => {
-    socket.join(data);
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
   });
 
-  socket.on("send_message", (data) => {
-    socket.to(data.room).emit("receive_message", data);
+  socket.on("message", (message) => {
+    console.log("Message received:", message);
+    io.emit("message", message);
   });
 });
 
-server.listen(3001, () => {
-  console.log("SERVER IS RUNNING");
+const PORT = process.env.PORT || 3001;
+
+server.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
 });

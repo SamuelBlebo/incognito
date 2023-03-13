@@ -4,38 +4,43 @@ import io from "socket.io-client";
 const socket = io.connect("http://localhost:3001");
 
 const Chat = () => {
-  // Messages States
   const [message, setMessage] = useState("");
-  const [messageReceived, setMessageReceived] = useState("");
-
-  const sendMessage = () => {
-    socket.emit("send_message", { message });
-  };
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    socket.on("receive_message", (data) => {
-      setMessageReceived(data.message);
+    socket.on("message", (message) => {
+      setMessages((messages) => [...messages, message]);
     });
-  });
+    return () => {
+      socket.off("message");
+    };
+  }, []);
+
+  const handleMessageSubmit = (event) => {
+    event.preventDefault();
+    socket.emit("message", message);
+    setMessage("");
+  };
+
+  const handleMessageChange = (event) => {
+    setMessage(event.target.value);
+  };
 
   return (
     <div className="App">
       <ul id="messages">
-        {message.map((messageReceived, index) => (
-          <li key={index}>{messageReceived}</li>
+        {messages.map((message, index) => (
+          <li key={index}>{message}</li>
         ))}
       </ul>
-      <form id="form" onSubmit={messageReceived}>
+      <form id="form" onSubmit={handleMessageSubmit}>
         <input
-          placeholder="message ....."
           id="input"
           type="text"
-          autoComplete="off"
-          onChange={(e) => setMessage(e.target.value)}
+          value={message}
+          onChange={handleMessageChange}
         />
-        <button onclick={sendMessage} type="submit">
-          Send
-        </button>
+        <button type="submit">Send</button>
       </form>
     </div>
   );
